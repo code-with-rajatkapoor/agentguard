@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime data (never commit)
+logs/
+.env
+
+# Vercel
+.vercel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Internal coaching / understanding docs - not part of the project repo
+FEATURE_STATUS.md
+HACKATHON_WORK_PLAN.md
+LIVE_DEMO_PLAN.md

@@ -1,0 +1,33 @@
+# AgentGuard — Render deployment config
+# Deploys the EXISTING app as one Web Service (backend + frontend).
+# Secrets are NOT stored here: values are set in the Render dashboard
+# (envVar "sync: false"). This file is safe to commit.
+services:
+  - type: web
+    name: agentguard
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: AI_PROVIDER
+        value: nous
+      - key: AI_TIMEOUT
+        value: "20"
+      - key: AI_MAX_RETRIES
+        value: "1"
+      - key: AI_MAX_TOKENS
+        value: "256"
+      - key: AI_CACHE
+        value: "1"
+      - key: NOUS_MODEL
+        value: meituan/longcat-2.5:free
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: NOUS_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
