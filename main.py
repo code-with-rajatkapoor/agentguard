@@ -476,7 +476,7 @@ def health():
     info = describe_provider()
     return {
         "status": "ok",
-        "model": info.get("model") or os.getenv("NOUS_MODEL", "meituan/longcat-2.5:free"),
+        "model": info.get("model") or os.getenv("AI_MODEL", "gemini-3.8-flash"),
         "provider": info.get("provider"),
         "provider_known": info.get("known", False),
         "provider_configured": info.get("configured", False),
