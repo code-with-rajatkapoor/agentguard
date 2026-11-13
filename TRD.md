@@ -222,7 +222,7 @@ When a run pauses in `approval_required`, the pending event is stored in `sessio
 |---|---|---|---|---|---|
 | GET | `/` | Serve the frontend | — | `FileResponse(frontend/index.html)` | 404 if frontend missing |
 | GET | `/{filename}` | Serve static frontend assets | path param | CSS / JS | 404 on traversal / missing file |
-| GET | `/api/health` | Health + provider metadata | — | `{status, model, provider, provider_known, provider_configured, provider_verified, vercel, frontend_index, frontend_index_exists, frontend_dir_exists}` | — |
+| GET | `/api/health` | Health + provider metadata | — | `{status, model, provider, provider_known, provider_configured, provider_verified, frontend_index, frontend_index_exists, frontend_dir_exists}` | — |
 | GET | `/api/provider/verify` | Live provider probe | — | `{ok, provider, model, latency_ms, error}` | — |
 | GET | `/api/provider/config` | Secret-free provider config | — | `{active, providers: {name: {key_env, base_url, default_model, supports_native_tools, notes}}}` | — |
 | POST | `/api/run-agent` | Start a run | `{task, mode: normal|attack|ai, provider?}` | session (status, events, agent_output, …) | 400 on invalid mode/provider |
@@ -333,7 +333,7 @@ Result: **66 tests pass, 0 failures** (2026-11-13). All provider calls are mocke
 ## 15. Current and proposed deployment architecture
 
 ### 15.1 Current
-- **Vercel:** `vercel.json` uses `@vercel/python` build; all routes rewrite to `main.py`. FastAPI serves the single HTML/CSS/JS frontend and the API.
+- **Render + Gemini:** `render.yaml` defines a single Web Service (`uvicorn main:app`); `main.py` serves the static frontend at `/` and `/{filename}` and the API at `/api/*`.
 - **Local:** `uvicorn main:app` on a chosen port; frontend at the root, API at `/api/*`.
 
 ### 15.2 Proposed: Render (smallest safe change)

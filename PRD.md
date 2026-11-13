@@ -158,7 +158,7 @@ Observable and testable:
 
 | Phase | Content | Evidence |
 |---|---|---|
-| Pre-existing baseline | Initial project (`7936e01`), Vercel config, README, `vercel.json`, design-system commits `d0450d5` → `c4b0ff8` | Commit history |
+| Pre-existing baseline | Initial project (`7936e01`), README, design-system commits `d0450d5` → `c4b0ff8` | Commit history |
 | Hackathon docs | `PROJECT_DOCUMENTATION.md`, `FUTURE_ENHANCEMENTS.md`, `JUDGE_READY_GUIDE.md` | Commits `7826fcc`, `7ce4227` |
 | Current (this work) | PRD.md, TRD.md, RENDER_DEPLOYMENT.md; README update with links | This document set |
 | Organizer clarification (2026-11-13) | Confirmed that Google AI Studio (Gemini API) counts for the Google-environment criterion; additional Google platforms (Stitch, Antigravity) assessed as future options only | Organizer email / Discord clarification |

@@ -369,7 +369,7 @@ The score is capped at 100. The final score is the sum of all matching risk fact
 ### 11.4 Storage notes
 
 - **Current:** forensic events are stored in `logs/forensics.jsonl`, one JSON object per line. Simulated data lives in `data/emails.json` and `data/documents.json`.
-- **Vercel:** the forensic log is written to `/tmp/forensics.jsonl` because the serverless filesystem is read-only.
+- **Render:** forensic log stays in `logs/forensics.jsonl` (local, Render-safe).
 - **Future:** SQLite can replace the JSONL file for indexed queries and larger deployments.
 
 ---

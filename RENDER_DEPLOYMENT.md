@@ -22,8 +22,7 @@
 ### Why this architecture is the smallest safe change
 - `main.py` already dispatches `GET /` → `FileResponse(frontend/index.html)` and
   `GET /{filename}` → static assets. Nothing needs to move.
-- The existing `vercel.json` (built on Vercel) is **not** used on Render; Render
-  uses the `render.yaml` below.
+- The render.yaml (below) is the only deployment configuration; no legacy deployment config remains.
 - The API contract, policy engine, forensic log, and demo modes are untouched.
 
 ---
@@ -89,8 +88,7 @@ curl -s http://<RENDER-URL>/api/verify | python3 -m json.tool
 - **Ephemeral filesystem:** `logs/forensics.jsonl` and `data/*.json` are written to the
   project directory. On Render these are lost on a deploy/restart unless a **persistent
   disk** is mounted (drag-and-drop volume, or set `LOG_DIR=/tmp`-style env config).
-  - Local code uses `VERCEL` env var to pick `/tmp`; on Render that variable is not set,
-    so logs go to `logs/` in the project directory.
+- Logs are written to logs/ in the project directory - Render-safe, no platform env var needed.
 - **Provider timeouts** under Render's proxy / idle timeouts.
 - **`AI_CACHE` / `AI_WARM`** behaviour across a cold deploy cycle.
 - Whether the approved demo access to the provider keys works behind Render's egress.
@@ -151,10 +149,7 @@ services:
 
 ---
 
-## 7. Vercel (existing baseline, unchanged)
 
-The committed `vercel.json` (build `@vercel/python`, rewrites to `main.py`) remains
-the instruction for the **existing** Vercel deployment. It is not modified by this guide.
 
 ---
 

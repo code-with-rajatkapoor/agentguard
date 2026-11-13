@@ -14,10 +14,8 @@ import threading
 from pathlib import Path
 from typing import Any
 
-if os.environ.get("VERCEL"):
-    LOG_DIR = Path("/tmp")
-else:
-    LOG_DIR = Path(__file__).parent / "logs"
+# Local logging: logs/ is always used (Render-safe; no platform detection).
+LOG_DIR = Path(__file__).parent / "logs"
 LOG_FILE = LOG_DIR / "forensics.jsonl"
 _LOCK = threading.Lock()
 _LAST_HASH: str | None = None

@@ -482,8 +482,7 @@ def health():
         "provider_configured": info.get("configured", False),
         # Not probed here - call /api/provider/verify for a live check.
         "provider_verified": None,
-        "vercel": bool(os.environ.get("VERCEL")),
-        # Relative location only: the absolute server path is not exposed.
+        # Local server only (Render / local); no platform signal needed.
         "frontend_index": "frontend/index.html",
         "frontend_index_exists": FRONTEND_INDEX.exists(),
         "frontend_dir_exists": FRONTEND_DIR.exists(),

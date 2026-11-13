@@ -300,7 +300,7 @@ nothing. And we have a complete, timestamped record of what they tried.
 | Design system | `frontend/styles.css` | tokens, components, animations, responsive |
 | Data | JSON files | fully offline, deterministic, no database |
 | Forensics | JSONL append-only log | simple, durable, easy to replay |
-| Deployment | Vercel (`@vercel/python`) | free, live URL, auto-deploy on push |
+| Deployment | Render (single Web Service, render.yaml) | free, live URL, auto-deploy on push |
 | AI mode | Nous Portal (OpenAI-compatible) | with automatic scripted fallback |
 
 **No paid API required. No Docker required. Works fully offline.**
@@ -361,7 +361,7 @@ agentguard/
 │   └── forensics.jsonl      # the forensic record
 ├── requirements.txt
 ├── .env.example
-├── vercel.json
+├── render.yaml
 ├── README.md
 ├── PROJECT_DOCUMENTATION.md
 ├── FUTURE_ENHANCEMENTS.md
@@ -454,8 +454,7 @@ agentguard/
 
 **Q8. Tech stack kyun FastAPI?**
 > Async, automatic request validation via Pydantic, built-in OpenAPI docs, and
-> it runs on Vercel's Python runtime with zero configuration. Perfect for a
-> hackathon project that must be reliable and demoable.
+it is deployment-ready on Render with zero configuration. Perfect for a hackathon project that must be reliable and demoable.
 
 **Q9. AI mode me kya hota hai agar model fail ho jaye?**
 > The AI agent calls the model, validates the JSON against the schema, and
@@ -484,9 +483,7 @@ agentguard/
 > the world.
 
 **Q13. Deployment kaise kiya?**
-> Vercel, using the Python runtime. `vercel.json` routes every request to
-> `main.py`; FastAPI serves both the API and the static frontend. Push to GitHub
-> triggers an automatic deploy. Live at `https://agentguard-cyan.vercel.app/`.
+Render, using a single Web Service (`render.yaml`). `render.yaml` routes every request to `main.py`; FastAPI serves both the API and the static frontend. Push to GitHub triggers an automatic deploy.
 
 **Q14. Koi paid API use hui?**
 > No. The AI mode uses the free Nous Portal model and works without a key
@@ -523,12 +520,12 @@ agentguard/
 
 | Item | Value |
 |---|---|
-| Live URL | https://agentguard-cyan.vercel.app/ |
+| Live URL | (your-service-name).onrender.com (after deployment) |
 | GitHub | https://github.com/code-with-rajatkapoor/agentguard |
-| Platform | Vercel (`@vercel/python`) |
-| Local run | `npm`-free — `pip install -r requirements.txt`, then `uvicorn main:app --port 8000` |
+| Platform | Render (single Web Service, render.yaml) |
+| Local run | `pip install -r requirements.txt`, phir `uvicorn main:app --port 8000` |
 | Local URL | http://127.0.0.1:8000/ |
-| Forensic log | `logs/forensics.jsonl` locally, `/tmp/forensics.jsonl` on Vercel |
+| Forensic log | `logs/forensics.jsonl` (Render-safe, local) |
 
 ---
 
@@ -805,7 +802,7 @@ mila. Aur hamare paas poora timestamped record hai ki usne kya try kiya.
 | Design system | `frontend/styles.css` | tokens, components, animations, responsive |
 | Data | JSON files | poori tarah offline, deterministic, koi database nahi |
 | Forensics | JSONL append-only log | simple, durable, aasaani se replay |
-| Deployment | Vercel (`@vercel/python`) | free, live URL, push pe auto-deploy |
+| Deployment | Render (single Web Service, render.yaml) | free, live URL, push pe auto-deploy |
 | AI mode | Nous Portal (OpenAI-compatible) | automatic scripted fallback ke saath |
 
 **Koi paid API nahi. Koi Docker nahi. Poora offline kaam karta hai.**
@@ -931,7 +928,7 @@ mila. Aur hamare paas poora timestamped record hai ki usne kya try kiya.
 
 **Q8. Tech stack kyun FastAPI?**
 > Async hai, Pydantic se automatic request validation, built-in OpenAPI docs, aur
-> Vercel ke Python runtime pe zero configuration me chalta hai. Hackathon project
+> Render pe zero configuration me chalta hai. Hackathon project
 > ke liye perfect — reliable aur demoable.
 
 **Q9. AI mode me model fail ho to kya hota hai?**
@@ -961,9 +958,7 @@ mila. Aur hamare paas poora timestamped record hai ki usne kya try kiya.
 > decide karta hai.
 
 **Q13. Deployment kaise kiya?**
-> Vercel, Python runtime use karke. `vercel.json` har request ko `main.py` pe
-> bhejta hai; FastAPI API aur static frontend dono serve karta hai. GitHub pe
-> push karne se automatic deploy hota hai. Live: `https://agentguard-cyan.vercel.app/`.
+Render, render.yaml use karke. `render.yaml` har request ko `main.py` pe bhejta hai; FastAPI API aur static frontend dono serve karta hai. GitHub pe push karne se automatic deploy hota hai. Live URL is set in the Render dashboard after deployment.
 
 **Q14. Koi paid API use hui?**
 > Nahi. AI mode free Nous Portal model use karta hai aur key ke bina bhi kaam
@@ -1000,12 +995,12 @@ mila. Aur hamare paas poora timestamped record hai ki usne kya try kiya.
 
 | Item | Value |
 |---|---|
-| Live URL | https://agentguard-cyan.vercel.app/ |
+| Live URL | (your-service-name).onrender.com (after deployment) |
 | GitHub | https://github.com/code-with-rajatkapoor/agentguard |
-| Platform | Vercel (`@vercel/python`) |
+| Platform | Render (single Web Service, render.yaml) |
 | Local run | `pip install -r requirements.txt`, phir `uvicorn main:app --port 8000` |
 | Local URL | http://127.0.0.1:8000/ |
-| Forensic log | locally `logs/forensics.jsonl`, Vercel pe `/tmp/forensics.jsonl` |
+| Forensic log | logs/forensics.jsonl (Render-safe, local) |
 
 ---
 
@@ -1018,11 +1013,11 @@ mila. Aur hamare paas poora timestamped record hai ki usne kya try kiya.
 | **Why unique** | Koi bhi tool call pe nahi dekh raha — yehi gap hai |
 | **Attack blocked** | `send_external_message` (risk 100) + `delete_ticket` (risk 100) — dono execute nahi hue |
 | **Safe run** | 3 calls, sab ALLOW, risk 0, completed |
-| **Tech** | FastAPI + Pydantic + vanilla JS + Vercel |
+| **Tech** | FastAPI + Pydantic + vanilla JS + Gemini (free tier) |
 | **AI mode** | Nous Portal LLM, invalid JSON pe scripted fallback |
 | **Kill switch** | `POST /api/stop` / Block Agent button |
 | **Evidence** | `logs/forensics.jsonl` — har event timestamped + event_id |
-| **Live** | https://agentguard-cyan.vercel.app/ |
+| **Live** | (your-service-name).onrender.com (after deployment) |
 | **Repo** | https://github.com/code-with-rajatkapoor/agentguard |
 
 ---
