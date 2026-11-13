@@ -47,7 +47,7 @@ Gemini. `GEMINI_API_KEY` is the only API key the Gemini service needs.
    `main`. Restart is required for the new values to take effect.
 3. **Successful startup** looks like:
    - `/api/health` returns `200` with provider `gemini` and
-     model `gemini-2.0-flash`.
+     model `gemini-3.8-flash`.
    - Render logs show the Gemini adapter starting (endpoint
      `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`).
 4. **If configuration is missing**, the app refuses to start with a clear log:

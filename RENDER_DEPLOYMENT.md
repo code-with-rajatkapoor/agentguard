@@ -45,10 +45,11 @@
 
    | Variable | Purpose | Required? |
    |---|---|---|
-   | `AI_PROVIDER` | `nous` / `openrouter` / `openai` / `gemini` | Yes (default `nous`) |
-   | `NOUS_API_KEY` | Nous Portal token | If `nous` (or fallback) is used |
-   | `NOUS_MODEL` | Model id | No (default in code) |
-   | `NOUS_BASE_URL` | Provider base URL | No |
+   | `AI_PROVIDER` | `gemini` / `groq` / `openrouter` / `openai` / `nous` | Yes (default `gemini`) |
+   | `AI_MODEL` | Model id | No (default `gemini-3.8-flash` for gemini) |
+   | `GEMINI_API_KEY` | Gemini bearer token | If `gemini` |
+   | `GROQ_API_KEY` | Groq bearer token | If `groq` |
+   | `NOUS_API_KEY` | (legacy) Nous Portal token | If `nous` (or fallback) |
    | `OPENROUTER_API_KEY` | OpenRouter token | If `openrouter` |
    | `OPENAI_API_KEY` | OpenAI token | If `openai` |
    | `GEMINI_API_KEY` | Gemini (Google AI Studio) token | If `gemini` — Google AI Studio counts for the Google-environment criterion per organizer confirmation |
@@ -131,7 +132,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: AI_PROVIDER
-        value: nous
+        value: gemini
       - key: AI_TIMEOUT
         value: "20"
       - key: AI_MAX_RETRIES
@@ -144,7 +145,7 @@ services:
     # Add provider keys via the Render dashboard > Environment.
     #
     # Example (do not copy):
-    # - key: NOUS_API_KEY
+    # - key: GEMINI_API_KEY
     #   sync: false
 ```
 
