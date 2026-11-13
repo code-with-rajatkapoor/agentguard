@@ -12,7 +12,9 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: AI_PROVIDER
-        value: nous
+        value: gemini
+      - key: AI_MODEL
+        value: gemini-2.0-flash
       - key: AI_TIMEOUT
         value: "20"
       - key: AI_MAX_RETRIES
@@ -21,13 +23,5 @@ services:
         value: "256"
       - key: AI_CACHE
         value: "1"
-      - key: NOUS_MODEL
-        value: meituan/longcat-2.5:free
       - key: GEMINI_API_KEY
-        sync: false
-      - key: NOUS_API_KEY
-        sync: false
-      - key: OPENROUTER_API_KEY
-        sync: false
-      - key: OPENAI_API_KEY
         sync: false

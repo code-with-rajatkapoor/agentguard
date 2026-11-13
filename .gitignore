@@ -21,3 +21,9 @@ Thumbs.db
 FEATURE_STATUS.md
 HACKATHON_WORK_PLAN.md
 LIVE_DEMO_PLAN.md
+
+# Demo data (runtime, regenerated)
+data/*.json
+
+# Logs
+*.log
