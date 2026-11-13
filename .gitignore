@@ -27,3 +27,11 @@ data/*.json
 
 # Logs
 *.log
+
+# Session-generated (video production / planning / drafts) — not part of the project repo
+agentguard_demo_video_script.html
+AgentGuard_demo_video_script_Hinglish.pdf
+
+# Vercel
+vercel.json
+.vercel/
