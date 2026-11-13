@@ -156,7 +156,7 @@ sequenceDiagram
 
 ## 5. Provider selection and conversation-history lifecycle
 
-- **Selection:** `AI_PROVIDER` env var (default `nous`). `providers.resolve_provider()` reads the key env (e.g. `GEMINI_API_KEY`), base URL, and model for the active provider. Unrelated keys may be present but are ignored.
+- **Selection:** `AI_PROVIDER` env var (default `gemini`). `providers.resolve_provider()` reads the key env (e.g. `GEMINI_API_KEY`), base URL, and model for the active provider. Unrelated keys may be present but are ignored.
 - **Fallback:** If the provider returns invalid JSON, times out, or raises a non-recoverable error, the agent writes `SCRIPTED_FALLBACK` / `FALLBACK` to the session and hands control to the deterministic scripted agent. The run finishes successfully regardless of provider availability.
 - **History:** The agent owns exactly one `self.history` list per session. Assistant tool calls and tool results are appended; the same list is sent back to the provider every turn.
 
@@ -266,7 +266,7 @@ When a run pauses in `approval_required`, the pending event is stored in `sessio
 
 | Variable | Purpose |
 |---|---|
-| `AI_PROVIDER` | Selects provider: `nous` / `openrouter` / `openai` / `gemini`. Default: `nous`. |
+| `AI_PROVIDER` | Selects provider: `nous` / `openrouter` / `openai` / `gemini`. Default: `gemini`. |
 | `AI_MODEL` | Optional model id override |
 | `NOUS_API_KEY` | Nous Portal bearer token |
 | `NOUS_MODEL` | Default Nous model |

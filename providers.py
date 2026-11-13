@@ -222,16 +222,27 @@ PROVIDER_SPECS: dict[str, ProviderSpec] = {
         token_param="max_completion_tokens",
         notes="OpenAI Chat Completions.",
     ),
+    "groq": ProviderSpec(
+        key_env="GROQ_API_KEY",
+        base_url="https://api.groq.com/openai/v1/chat/completions",
+        default_model="llama-3.3-70b-versatile",
+        token_param="max_tokens",
+        notes="Groq - OpenAI-compatible chat completions. Free plan entry: $0.",
+    ),
     "gemini": ProviderSpec(
         key_env="GEMINI_API_KEY",
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-        default_model="gemini-2.0-flash",
+        default_model="gemini-3.8-flash",
         token_param="max_tokens",
-        notes="Gemini via its documented OpenAI-compatible interface.",
+        notes=(
+            "Gemini via its documented OpenAI-compatible interface. Free tier: "
+            "$0 (Google AI Studio). Legacy gemini-2.0-flash was shut down "
+            "2026-06-01; use gemini-3.8-flash."
+        ),
     ),
 }
 
-DEFAULT_PROVIDER = "nous"
+DEFAULT_PROVIDER = "gemini"
 
 
 # ---------------------------------------------------------------------------

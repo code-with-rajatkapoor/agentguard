@@ -27,7 +27,7 @@ Service: `agentguard` — Dashboard → Services → **agentguard** → Environm
 | Variable name | Exact non-secret value / instruction | Required? |
 |---|---|---|
 | `AI_PROVIDER` | `gemini` | **Yes** — selects the Google AI Studio provider |
-| `AI_MODEL` | `gemini-2.0-flash` | **Yes** — the adapter's default model |
+| `AI_MODEL` | `gemini-3.8-flash` | **Yes** — the adapter's default model (free tier, per Google AI Studio pricing) |
 | `GEMINI_API_KEY` | **Paste your own key privately in Render** | **Yes** — key from section A |
 | `AI_TIMEOUT` | `20` | No (optional) |
 | `AI_MAX_RETRIES` | `1` | No (optional) |

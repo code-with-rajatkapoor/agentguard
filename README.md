@@ -152,9 +152,9 @@ Copy-Item .env.example .env
 
 ---
 
-## Configure `.env` for Nous Portal
+## Configure `.env` for Gemini (or another provider)
 
-The `ai` mode talks to the Nous Portal OpenAI-compatible endpoint.
+The `ai` mode talks to the OpenAI-compatible endpoint of the configured provider.
 
 1. Create an account and generate an API key at **https://portal.nousresearch.com**.
 2. Edit `.env`:

@@ -100,7 +100,7 @@ class _NoForensicWrite(unittest.TestCase):
 class TestProviderSelection(unittest.TestCase):
     def test_known_providers_are_registered(self):
         self.assertEqual(
-            set(providers.PROVIDER_SPECS), {"nous", "openrouter", "openai", "gemini"}
+            set(providers.PROVIDER_SPECS), {"nous", "openrouter", "openai", "gemini", "groq"}
         )
 
     def test_correct_provider_and_key_selection(self):
@@ -547,6 +547,41 @@ class TestCacheWarmUp(unittest.TestCase):
         finally:
             main.record_event = original
         self.assertEqual([e["event_id"] for e in written], ["a"])
+
+
+    def test_groq_spec_registration(self):
+        from providers import PROVIDER_SPECS
+        self.assertIn("groq", PROVIDER_SPECS)
+        spec = PROVIDER_SPECS["groq"]
+        self.assertEqual(spec.key_env, "GROQ_API_KEY")
+        self.assertEqual(
+            spec.base_url, "https://api.groq.com/openai/v1/chat/completions"
+        )
+        self.assertEqual(spec.default_model, "llama-3.3-70b-versatile")
+
+    def test_groq_rate_limit_is_classified(self):
+        import os
+        os.environ["GROQ_API_KEY"] = "test-key-not-a-real-secret"
+        from unittest.mock import patch
+        from providers import chat_completion, resolve_provider
+        config = resolve_provider(provider="groq", model="llama-3.3-70b-versatile")
+        fake = type(
+            "Resp",
+            (),
+            {
+                "status_code": 429,
+                "headers": {"Retry-After": "1"},
+                "json": lambda self: {"error": {"message": "too many requests"}},
+            },
+        )()
+        with patch("providers._post", return_value=fake):
+            result = chat_completion(
+                [{"role": "user", "content": "hi"}],
+                config=config,
+                max_tokens=8,
+                max_retries=0,
+            )
+        self.assertEqual(result.error_kind, "rate_limit")
 
 
 if __name__ == "__main__":
