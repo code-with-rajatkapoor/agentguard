@@ -327,11 +327,11 @@ The score is capped at 100. The final score is the sum of all matching risk fact
 ### 11.2 Technology stack
 
 - **Backend:** Python 3.10+, FastAPI, Uvicorn, Pydantic
-- **AI model:** Hermes / Nous Portal (OpenAI-compatible chat completions)
+- **AI model:** Gemini / Groq (OpenAI-compatible chat completions)
 - **HTTP client:** Requests
 - **Frontend:** HTML, CSS, vanilla JavaScript (no build step)
 - **Storage:** JSON files for simulated data and JSONL for forensic logs
-- **Deployment:** `vercel.json` for Vercel (Python ASGI + static frontend)
+- **Deployment:** `render.yaml` for Render (Python ASGI + static frontend)
 
 ### 11.3 Architecture diagram
 
@@ -463,7 +463,7 @@ These are the features **actually implemented** in the current project.
 - `GET /api/health` — return status and configured model
 - Resumable run sessions kept in memory
 - Deterministic scripted normal and attack plans
-- AI mode that calls the configured Hermes/Nous model and falls back to the scripted agent if the model is unavailable or returns invalid JSON twice
+- AI mode that calls the configured Gemini/Groq model and falls back to the scripted agent if the model is unavailable or returns invalid JSON twice
 - Policy engine with tool lists, risk weights, thresholds, and regex patterns
 - Sensitive-data and prompt-injection detection
 - Context heuristics: unrelated actions and suspicious tool sequences
@@ -489,8 +489,8 @@ These are the features **actually implemented** in the current project.
 
 ### 15.3 Deployment
 
-- `vercel.json` for Vercel (FastAPI ASGI + static frontend)
-- `.env.example` for Nous Portal configuration
+- `render.yaml` for Render (FastAPI ASGI + static frontend)
+- `.env.example` (AI_PROVIDER / AI_MODEL / GEMINI_API_KEY / GROQ_API_KEY)
 - Fully local and offline runnable
 
 ---
