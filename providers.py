@@ -1,11 +1,11 @@
 """AgentGuard AI provider configuration and adapter.
 
-Supports four OpenAI Chat-Completions-compatible providers:
+Supports five OpenAI Chat-Completions-compatible providers:
 
-    nous | openrouter | openai | gemini
+    gemini | groq | openrouter | openai | nous
 
 Design rules (see the provider-support spec):
-  * ``AI_PROVIDER`` selects the provider (default ``nous``).
+  * ``AI_PROVIDER`` selects the provider (default ``gemini``).
   * ``AI_MODEL`` overrides the model id.
   * Only the *selected* provider's key is required.
   * Keys are read from the backend environment only - never from the client.
