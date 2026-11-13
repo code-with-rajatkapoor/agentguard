@@ -38,9 +38,9 @@ The agent is not malicious — it is *manipulated*. Traditional security lives a
 
 ```
    ┌─────────────────┐   proposed tool call   ┌───────────────────────┐
-   │   AI Agent      │ ─────────────────────► │      AgentGuard       │
+   │  AI Agent      │ ─────────────────────► │      AgentGuard       │
    │  scripted or    │                        │      guard.py         │
-   │  Hermes/Nous    │                        │  policy engine        │
+   │  Gemini/Groq    │                        │  policy engine        │
    └─────────────────┘                        └───────────────────────┘
                                                        │
                      ┌─────────────────────────────────┼──────────────────────────┐
@@ -65,7 +65,7 @@ The agent is not malicious — it is *manipulated*. Traditional security lives a
 **Request flow**
 
 1. `POST /api/run-agent` creates a resumable run session.
-2. The agent proposes a tool call (scripted plan or Hermes/Nous JSON).
+2. The agent proposes a tool call (scripted plan or Gemini/Groq JSON).
 3. `guard.inspect_tool_call(tool, arguments, context)` scores the call against the policy engine.
 4. `ALLOW` → the simulated tool executes and the result is fed back to the agent.
 5. `REQUIRE_APPROVAL` → the run pauses; the dashboard shows an Approve / Block panel; `POST /api/approve` resumes it.
@@ -85,7 +85,7 @@ The agent is not malicious — it is *manipulated*. Traditional security lives a
 - **Context heuristics** — unrelated actions and suspicious tool sequences (e.g. `search_documents` → `send_external_message`).
 - **Resumable human-in-the-loop approval** — approve or block a paused action; the run continues from exactly where it stopped.
 - **Forensic recorder** — every decision is persisted to `logs/forensics.jsonl` with event id, timestamp, run id, arguments, verdict, risk score, reasons, matched rules, untrusted content seen and the execution result / block reason.
-- **Three demo modes** — deterministic `normal`, deterministic `attack`, and an `ai` mode backed by the configured Hermes/Nous model with automatic scripted fallback.
+- **Three demo modes** — deterministic `normal`, deterministic `attack`, and an `ai` mode backed by the configured Gemini/Groq model with automatic scripted fallback.
 - **Professional command-center dashboard** — sidebar navigation, dark/light themes, glassmorphism cards, live circular risk gauge, threat-level indicator, four stat cards, recent activity, threat monitor, forensic timeline, policy viewer, security reports and settings.
 - **Dramatic attack visualization** — full-screen red flash, an animated `ATTACK BLOCKED` banner, a tilted BLOCK stamp, pulsing red decision panel and a red-tinted page state whenever a run is blocked.
 - **Threat intelligence panel** — the captured malicious email with the exact injected instructions highlighted in red, the source sender, and the blocked exfiltration payload (recipient + body that never left the system).
@@ -152,26 +152,39 @@ Copy-Item .env.example .env
 
 ---
 
-## Configure `.env` for Gemini (or another provider)
+## Configure `.env` for Gemini (or another supported provider)
 
 The `ai` mode talks to the OpenAI-compatible endpoint of the configured provider.
 
-1. Create an account and generate an API key at **https://portal.nousresearch.com**.
-2. Edit `.env`:
+1. Create an account and generate an API key for the provider you want (see TRD.md §5 for key pages):
+   - **Gemini**: Google AI Studio — https://aistudio.google.com/apikey (free tier, $0)
+   - **Groq**: https://console.groq.com/keys (free plan, $0)
+   - **OpenRouter**: https://openrouter.ai/keys (free tier; check provider limits)
+   - **OpenAI**: https://platform.openai.com/api-keys (paid; free-trial credits)
+   - **Nous Portal**: https://portal.nousresearch.com (legacy fallback only, `AI_PROVIDER=nous`)
+
+2. Edit `.env` (backend-only — values never reach the browser):
 
 ```bash
-NOUS_API_KEY=your_nous_api_key_here
-NOUS_MODEL=meituan/longcat-2.5:free
-NOUS_BASE_URL=https://inference-api.nousresearch.com/v1/chat/completions
+AI_PROVIDER=gemini                    # gemini | groq | openrouter | openai | nous
+AI_MODEL=gemini-3.8-flash             # default model for the selected provider
+GEMINI_API_KEY=*** Gemini key ***
+GROQ_API_KEY=*** Groq key ***
+OPENROUTER_API_KEY=*** OpenRouter key ...
+OPENAI_API_KEY=*** OpenAI key ...
 ```
 
-| Variable         | Meaning                                             |
-| ---------------- | --------------------------------------------------- |
-| `NOUS_API_KEY`   | Bearer token used in the `Authorization` header.    |
-| `NOUS_MODEL`     | Model id sent in the request body.                  |
-| `NOUS_BASE_URL`  | Full OpenAI-compatible `/chat/completions` URL.      |
+| Variable | Meaning |
+| --- | --- |
+| `AI_PROVIDER` | Provider selection (default: `gemini`) |
+| `AI_MODEL` | Model id override (default `gemini-3.8-flash` for gemini) |
+| `GEMINI_API_KEY` | Gemini bearer token — Google AI Studio free tier `$0`; counts for the Google-environment criterion (TRD.md §5.1) |
+| `GROQ_API_KEY` | GroqCloud bearer token — free plan `$0` |
+| `OPENROUTER_API_KEY` | OpenRouter bearer token |
+| `OPENAI_API_KEY` | OpenAI bearer token |
+| `NOUS_API_KEY` | (legacy) Nous Portal bearer token — only when `AI_PROVIDER=nous` |
 
-**Offline behaviour:** if `NOUS_API_KEY` is missing, the request fails, or the model returns invalid JSON twice, AgentGuard automatically falls back to the deterministic scripted normal agent and marks the run with `fallback: true`. The demo therefore always works.
+**Offline behaviour:** if the selected provider's key is missing/placeholder or the provider call fails (auth, timeout, rate limit), AgentGuard automatically falls back to the deterministic scripted normal agent and marks the run with `fallback: true` / `run_mode: SCRIPTED_FALLBACK`. The demo therefore always works.
 
 ---
 
@@ -255,7 +268,7 @@ responsive breakpoints (1200 / 900 / 768 / 480 px) and accessibility helpers
    and the run finishes `blocked`.
 
 3. **AI demo** — pick **AI Agent**, click **Run Agent**.
-   The configured Hermes/Nous model chooses the tool calls itself. Blocked
+   The configured Gemini/Groq model chooses the tool calls itself. Blocked
    calls are fed back into the model's context so it can recover. If the model
    is unavailable, the run is marked `FALLBACK` and the scripted agent finishes it.
 
