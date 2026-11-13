@@ -39,7 +39,7 @@ No paid SDKs, no Docker dependencies, no build toolchains in the frontend.
 | `agent.py` | AI agent loop, conversation history, tool-call orchestration, scripted fallback, approval polling |
 | `guard.py` | Policy engine (`inspect_tool_call`) — scoring, rule matching, risk banding, matched rules |
 | `policies.py` | Policy configuration: allowed / denied / approval-required tool lists and default thresholds |
-| `providers.py` | Multi-provider adapter (Nous / OpenRouter / OpenAI / Gemini). Resolves config, builds headers/payload, retries, caches responses, normalises completions |
+| `providers.py` | Multi-provider adapter (Gemini / Groq / OpenRouter / OpenAI / Nous). Resolves config, builds headers/payload, retries, caches responses, normalises completions |
 | `tools.py` | Simulated tool definitions and `execute_tool` — local stand-ins for email, documents, ticketing, external messaging, deletion |
 | `redteam.py` | Attack generator: randomised scenarios (`prompt_injection`, `data_exfiltration`, `destructive_action`, `privilege_escalation`, `toxic_combination`) |
 | `forensic.py` | Append-only JSONL writer, hash-chain maintenance, `verify_chain()`, log readback |
@@ -100,7 +100,7 @@ flowchart LR
 ### 4.1 Plain text
 1. **User → API:** Frontend posts `AgentRunRequest {task, mode, provider?}` to `POST /api/run-agent`.
 2. **API → Agent:** `main.py` creates a `_new_session`, then calls `_run(session)`.
-3. **Agent → Provider:** The agent asks the configured provider (`providers.chat_completion`) for the next action. The provider is selected by `AI_PROVIDER` (default `nous`); only the active provider's key is required. If the provider fails (timeout, rate limit, invalid JSON), the agent enters the deterministic scripted fallback.
+3. **Agent → Provider:** The agent asks the configured provider (`providers.chat_completion`) for the next action. The provider is selected by `AI_PROVIDER` (default `gemini`); only the active provider's key is required. If the provider fails (timeout, rate limit, invalid JSON), the agent enters the deterministic scripted fallback.
 4. **Agent → Guard:** Every proposed tool call flows through `guard.inspect_tool_call(tool, arguments, context)`.
 5. **Guard → Decision:** The policy engine scores the call (0–100) and returns a band: `ALLOW` (0–24), `REQUIRE_APPROVAL` (25–79), or `BLOCK` (80+). Matched rules, reasons, and untrusted content are attached.
 6. **Decision → Tool / Approver / Skip:**
@@ -163,7 +163,7 @@ sequenceDiagram
 ### 5.1 Google AI Studio (Gemini) — actual usage status
 | Item | Status | Evidence |
 |---|---|---|
-| Which Google service/API is used | **Gemini API for Google AI Studio** — the documented OpenAI-compatible endpoint `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` (provider spec `gemini`, env var `GEMINI_API_KEY`, default model `gemini-2.0-flash`) | `providers.py` lines 225–228 (key_env=`GEMINI_API_KEY`, base_url=`https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`, default_model=`gemini-2.0-flash`, notes=`Gemini via its documented OpenAI-compatible interface.`); `requirements.txt` (no extra package — `requests` only) |
+| Which Google service/API is used | **Gemini API for Google AI Studio** — the documented OpenAI-compatible endpoint `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` (provider spec `gemini`, env var `GEMINI_API_KEY`, default model `gemini-3.8-flash`) | `providers.py` lines 225–228 (key_env=`GEMINI_API_KEY`, base_url=`https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`, default_model=`gemini-3.8-flash`, notes=`Gemini via its documented OpenAI-compatible interface.`); `requirements.txt` (no extra package — `requests` only) |
 | Configured | Provider registered in `PROVIDER_SPECS`; `GEMINI_API_KEY` in `.env.example`; `AI_PROVIDER=gemini` selectable | `providers.py` 225–228, `.env.example` |
 | Tested (mocked) | `tests/test_providers.py` includes gemini cases that pass; provider responses are mocked — no live key used | `tests/test_providers.py` |
 | Live-verified | **NOT VERIFIED** — no live API call was made in this session (no valid key in the workspace; live calls require operator approval) | Session record 2026-11-13 |
@@ -268,9 +268,8 @@ When a run pauses in `approval_required`, the pending event is stored in `sessio
 |---|---|
 | `AI_PROVIDER` | Selects provider: `nous` / `openrouter` / `openai` / `gemini`. Default: `gemini`. |
 | `AI_MODEL` | Optional model id override |
-| `NOUS_API_KEY` | Nous Portal bearer token |
-| `NOUS_MODEL` | Default Nous model |
-| `NOUS_BASE_URL` | Nous endpoint override |
+| `NOUS_API_KEY` | (legacy) Nous Portal bearer token — only when `AI_PROVIDER=nous` |
+| `GROQ_API_KEY` | GroqCloud bearer token — free plan `$0` |
 | `OPENROUTER_API_KEY` | OpenRouter bearer token |
 | `OPENAI_API_KEY` | OpenAI bearer token |
 | `GEMINI_API_KEY` | Gemini (Google AI Studio) bearer token — Google AI Studio counts for the Google-environment criterion per organizer confirmation |
@@ -305,7 +304,7 @@ uvicorn main:app --host 127.0.0.1 --port 8000
 # Frontend (FastAPI serves it at http://127.0.0.1:8000/)
 ```
 
-**Verified on 2026-11-13:** `GET /api/health` returned `{"status":"ok","provider":"nous","frontend_index_exists":true,"frontend_dir_exists":true}`. Frontend served by FastAPI. No external services contacted.
+**Verified on 2026-11-13:** `GET /api/health` returned `{"status":"ok","provider":"gemini","frontend_index_exists":true,"frontend_dir_exists":true}`. Frontend served by FastAPI. No external services contacted.
 
 ### Tests (verified)
 ```bash
@@ -364,7 +363,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: AI_PROVIDER
-        value: nous
+        value: gemini
       - key: AI_TIMEOUT
         value: "20"
       - key: AI_MAX_RETRIES
